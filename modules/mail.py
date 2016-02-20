@@ -4,7 +4,7 @@ import urllib2
 url = 'https://api.postmarkapp.com/email/withTemplate'
 
 
-class Mail():
+class Mail(object):
     def __init__(self, server_root, from_addr, api_key):
         self.server_root = server_root
         self.from_addr = from_addr

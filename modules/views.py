@@ -54,6 +54,8 @@ def login():
                 app.logger.info("success login!")
                 login_user(user)
                 return redirect(url_for('home'))
+            else:
+                flash('Invalid email or password')
         else:
             flash('Invalid email or password')
     return render_template('login.html', login_form=login_form, signup_form=SignupForm())
