@@ -167,12 +167,19 @@ def add_entry(id=None):
     print(form.show_user.data)
     if form.validate_on_submit():
         entry = Entry(topic_id=topic.id, title=form.title.data,
-                      description=form.description.data,
-                      user_id=current_user.id, category=form.category.data)
+                      description=form.description.data, category=form.category.data,
+                      user_id=current_user.id if form.show_user.data else None)
         db.session.add(entry)
         db.session.commit()
         return redirect(url_for('show_topic', id=topic.id))
     return render_template('entry_new.html', topic=topic, form=form)
+
+
+@app.route('/topic/<topic_id>/entry/<entry_id>')
+@login_required
+def show_entry(topic_id=None, entry_id=None):
+    entry = Entry.query.get(entry_id)
+    return render_template('entry.html', entry=entry)
 
 
 @app.route('/user')

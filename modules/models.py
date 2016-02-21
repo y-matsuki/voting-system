@@ -12,6 +12,7 @@ class User(db.Model):
     active = db.Column(db.Boolean, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
     topics = db.relationship('Topic', backref='owner', lazy='dynamic')
+    entries = db.relationship('Entry', backref='user', lazy='dynamic')
 
     def get_id(self):
         return self.id
@@ -70,7 +71,7 @@ class Topic(db.Model):
     is_public = db.Column(db.Boolean)
     entries = db.relationship('Entry', backref='topic', lazy='dynamic')
     members = db.relationship('User', secondary=members,
-                              backref=db.backref('my_projects', lazy='dynamic'))
+                              backref=db.backref('my_entries', lazy='dynamic'))
 
     def __repr__(self):
         return '<Topic id={id} title={title!r}>'.format(id=self.id, title=self.title)

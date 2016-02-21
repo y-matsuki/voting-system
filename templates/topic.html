@@ -5,12 +5,42 @@
 
 {% block body %}
   <div class="ui container">
-    {{ topic.title }}
+    <h2 class="ui header">{{ topic.title }}</h2>
     <a href="{{ url_for('add_entry', id=topic.id) }}"
        class="ui right floated teal button">
       New Entry
       <i class="right plus icon"></i>
     </a>
+    <div class="ui relaxed divided items">
+      {% for entry in topic.entries %}
+        <div class="item">
+          <div class="ui small image">
+            <img src="http://lorempixel.com/200/140/cats/{{ loop.index }}">
+          </div>
+          <div class="content">
+            <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
+              {{ entry.title }}</a>
+            <div class="meta">
+              {% if entry.user_id %}
+                <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;{{ entry.user.username }}</div>
+              {% else %}
+                <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;Anonymous</div>
+              {% endif %}
+            </div>
+            <div class="description">
+              {{ entry.description }}
+            </div>
+            <div class="extra">
+              <a href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}"
+                 class="ui right floated blue button">
+                Comment
+                <i class="right chevron icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endblock %}
 
