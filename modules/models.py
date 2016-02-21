@@ -66,6 +66,8 @@ class Topic(db.Model):
     id = db.Column(db.Text, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     title = db.Column(db.Text)
+    description = db.Column(db.Text)
+    is_public = db.Column(db.Boolean)
     entries = db.relationship('Entry', backref='topic', lazy='dynamic')
     members = db.relationship('User', secondary=members,
                               backref=db.backref('my_projects', lazy='dynamic'))
@@ -77,12 +79,13 @@ class Topic(db.Model):
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic_id = db.Column(db.Text, db.ForeignKey('topic.id'))
+    user_id = db.Column(db.Text, db.ForeignKey('user.id'))
     title = db.Column(db.Text)
-    detail = db.Column(db.Text)
+    description = db.Column(db.Text)
     # Bug, Enhance, Idea..
-    type = db.Column(db.Text)
+    category = db.Column(db.Text)
     # New, Vote, Pending, Done, Close
-    status = db.Column(db.Text)
+    status = db.Column(db.Text, default='new')
 
     def __repr__(self):
         return '<Entry id={id} title={title!r}>'.format(id=self.id, title=self.title)

@@ -3,14 +3,8 @@ import uuid
 from app import app, db, mail, login_manager
 from flask import request, redirect, url_for, render_template, flash, session
 from flask.ext.login import login_required, login_user, logout_user, current_user
-from form import LoginForm, SignupForm, PasswordForm
-from models import User, Reset
-
-
-@app.route('/')
-@login_required
-def home():
-    return render_template('home.html')
+from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm
+from models import User, Reset, Topic, Entry
 
 
 @login_manager.unauthorized_handler
@@ -20,7 +14,7 @@ def unauthorized():
 
 @app.before_request
 def before_request():
-    app.logger.info(session)
+    # app.logger.info(session)
     pass
 
 
@@ -110,19 +104,16 @@ def password():
     form = PasswordForm(request.form)
     if 'key' in session:
         if form.validate_on_submit():
-            if form.password.data != form.confirm.data:
-                flash('Please enter same password.')
-            else:
-                reset = Reset.query.get(session['key'])
-                user = User.query.get(reset.user_id)
-                user.password = form.password.data
-                user.active = True
-                db.session.add(user)
-                db.session.delete(reset)
-                db.session.commit()
-                login_user(user)
-                session.pop('key')
-                return redirect(url_for('home'))
+            reset = Reset.query.get(session['key'])
+            user = User.query.get(reset.user_id)
+            user.password = form.password.data
+            user.active = True
+            db.session.add(user)
+            db.session.delete(reset)
+            db.session.commit()
+            login_user(user)
+            session.pop('key')
+            return redirect(url_for('home'))
         return render_template('password.html', form=form)
     return redirect(url_for('login'))
 
@@ -131,3 +122,60 @@ def password():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/')
+@login_required
+def home():
+    topics = Topic.query.all()
+    return render_template('home.html', topics=topics)
+
+
+@app.route('/topic/new', methods=['GET', 'POST'])
+@login_required
+def add_topic():
+    form = TopicForm(request.form)
+    if form.validate_on_submit():
+        topic = Topic.query.get(form.id.data)
+        if topic:
+            flash('Topic id is already exists.')
+        else:
+            topic = Topic(id=form.id.data, description=form.description.data,
+                          title=form.title.data, owner_id=current_user.id,
+                          is_public=form.is_public.data)
+            db.session.add(topic)
+            db.session.commit()
+            return redirect(url_for('home'))
+    return render_template('topic_new.html', form=form)
+
+
+@app.route('/topic/<id>')
+@login_required
+def show_topic(id=None):
+    topic = Topic.query.get(id)
+    return render_template('topic.html', topic=topic)
+
+
+@app.route('/topic/<id>/entry/new', methods=['GET', 'POST'])
+@login_required
+def add_entry(id=None):
+    topic = Topic.query.get(id)
+    form = EntryForm(request.form)
+    print(form.title.data)
+    print(form.description.data)
+    print(form.category.data)
+    print(form.show_user.data)
+    if form.validate_on_submit():
+        entry = Entry(topic_id=topic.id, title=form.title.data,
+                      description=form.description.data,
+                      user_id=current_user.id, category=form.category.data)
+        db.session.add(entry)
+        db.session.commit()
+        return redirect(url_for('show_topic', id=topic.id))
+    return render_template('entry_new.html', topic=topic, form=form)
+
+
+@app.route('/user')
+@login_required
+def user():
+    return render_template('user.html')

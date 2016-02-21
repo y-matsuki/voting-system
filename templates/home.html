@@ -4,6 +4,36 @@
 {% endblock %}
 
 {% block body %}
+  <div class="ui container">
+    <div class="ui relaxed divided items">
+      {% for topic in topics %}
+        <div class="item">
+          <div class="ui small image">
+              <img src="http://lorempixel.com/200/140/cats/{{ loop.index }}">
+          </div>
+          <div class="content">
+            <a class="header" href="{{ url_for('show_topic', id=topic.id) }}">
+              {{ topic.title }}</a>
+            <div class="description">
+              {{ topic.description }}
+            </div>
+            <div class="extra">
+              <a href="{{ url_for('show_topic', id=topic.id) }}"
+                 class="ui right floated teal button">
+                Enter
+                <i class="right chevron icon"></i>
+              </a>
+              {% if topic.is_public %}
+                <div class="ui blue label">Public</div>
+              {% else %}
+                <div class="ui red label">Private</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block script %}

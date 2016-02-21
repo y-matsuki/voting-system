@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField, SubmitField, HiddenField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
 class LoginForm(Form):
@@ -35,6 +35,38 @@ class PasswordForm(Form):
     ])
     confirm = PasswordField('Confirm Password', validators=[
         DataRequired(message='Confirm Password is required.'),
+        EqualTo('password', 'Please enter same password.'),
         Length(min=1, max=100, message='Password should be 1-100.')
     ])
+    submit = SubmitField('Submit')
+
+
+class TopicForm(Form):
+    id = StringField('Unique ID', validators=[
+        DataRequired('Unique ID is required.'),
+        Length(min=3, max=25, message='Unique should be 3-25.')
+    ])
+    title = StringField('Title', validators=[
+        DataRequired('Title is required.'),
+        Length(min=1, max=100, message='Title should be 1-100.')
+    ])
+    description = TextAreaField('Description')
+    is_public = BooleanField('Public')
+    submit = SubmitField('Submit')
+
+
+class EntryForm(Form):
+    title = StringField('Title', validators=[
+        DataRequired('Title is required.'),
+        Length(min=1, max=50, message='Unique should be 1-50.')
+    ])
+    description = TextAreaField('Description', validators=[
+        DataRequired('Title is required.'),
+        Length(min=1, max=5000, message='Description should be 1-5000.')
+    ])
+    category = SelectField('Type', choices=[
+        ('requirement', 'Requirement'), ('idea', 'Idea'),
+        ('bug', 'Bug')
+    ])
+    show_user = BooleanField('Show User')
     submit = SubmitField('Submit')

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+  <div class="ui container">
+    {{ topic.title }}
+    <a href="{{ url_for('add_entry', id=topic.id) }}"
+       class="ui right floated teal button">
+      New Entry
+      <i class="right plus icon"></i>
+    </a>
+  </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

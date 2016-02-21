@@ -3,5 +3,5 @@ config.py
 venv/
 .idea/
 *.pyc
-*.log
+*.log*
 *.db

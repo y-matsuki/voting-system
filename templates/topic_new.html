@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block style %}
+{% endblock %}
+
+{% block body %}
+  <div class="ui container">
+    <form class="ui form" action="{{ url_for('add_topic') }}" method="post">
+      {{ form.hidden_tag() }}
+      {% if form.id.errors %}
+        <div class="error field">
+      {% else %}
+        <div class="field">
+      {% endif %}
+      <label>{{ form.id.label }}</label>
+      {{ form.id(placeholder="Unique ID") }}
+      </div>
+      {% if form.title.errors %}
+        <div class="error field">
+      {% else %}
+        <div class="field">
+      {% endif %}
+      <label>{{ form.title.label }}</label>
+      {{ form.title(placeholder="Title") }}
+      </div>
+      <div class="field">
+        <label>{{ form.description.label }}</label>
+        {{ form.description(rows=5) }}
+      </div>
+      <div class="field">
+        <div class="ui checkbox">
+          {{ form.is_public }}
+          <label>Is this topic public?</label>
+        </div>
+      </div>
+      {{ form.submit(class='ui teal submit button') }}
+    </form>
+  </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}
