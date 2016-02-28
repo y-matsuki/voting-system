@@ -1,10 +1,12 @@
 import uuid
 
 from app import app, db, mail, login_manager
-from flask import request, redirect, url_for, render_template, flash, session
+from flask import request, redirect, url_for, render_template, flash, session, jsonify
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm
-from models import User, Reset, Topic, Entry
+from models import User, Reset, Topic, Entry, Point
+from datetime import date
+from sqlalchemy import func
 
 
 @login_manager.unauthorized_handler
@@ -153,7 +155,10 @@ def add_topic():
 @login_required
 def show_topic(id=None):
     topic = Topic.query.get(id)
-    return render_template('topic.html', topic=topic)
+    entries = db.session.query(Entry,
+                               db.func.count(Point.user_id).label('points')
+                               ).outerjoin(Point).group_by(Entry.id).order_by('points DESC')
+    return render_template('topic.html', topic=topic, entries=entries)
 
 
 @app.route('/topic/<id>/entry/new', methods=['GET', 'POST'])
@@ -179,7 +184,19 @@ def add_entry(id=None):
 @login_required
 def show_entry(topic_id=None, entry_id=None):
     entry = Entry.query.get(entry_id)
-    return render_template('entry.html', entry=entry)
+    return render_template('topic.html', entry=entry)
+
+
+@app.route('/topic/<topic_id>/entry/<entry_id>/vote')
+@login_required
+def vote_entry(topic_id=None, entry_id=None):
+    today = date.today()
+    point = Point.query.filter_by(entry_id=entry_id, user_id=current_user.id, date=today).first()
+    if not point:
+        point = Point(entry_id=entry_id, user_id=current_user.id, date=today)
+        db.session.add(point)
+        db.session.commit()
+    return redirect(url_for('show_topic', id=topic_id))
 
 
 @app.route('/user')

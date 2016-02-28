@@ -58,7 +58,7 @@ class User(db.Model):
 
 
 members = db.Table('members',
-                   db.Column('project_id', db.Text, db.ForeignKey('topic.id')),
+                   db.Column('topic_id', db.Text, db.ForeignKey('topic.id')),
                    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
                    )
 
@@ -87,9 +87,17 @@ class Entry(db.Model):
     category = db.Column(db.Text)
     # New, Vote, Pending, Done, Close
     status = db.Column(db.Text, default='new')
+    points = db.relationship('Point', backref='entry', lazy='dynamic')
 
     def __repr__(self):
         return '<Entry id={id} title={title!r}>'.format(id=self.id, title=self.title)
+
+
+class Point(db.Model):
+    __tablename__ = 'point'
+    entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'), primary_key=True)
+    user_id = db.Column(db.Text, db.ForeignKey('user.id'), primary_key=True)
+    date = db.Column(db.Date, primary_key=True)
 
 
 class Reset(db.Model):

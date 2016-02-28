@@ -12,7 +12,9 @@
       <i class="right plus icon"></i>
     </a>
     <div class="ui relaxed divided items">
-      {% for entry in topic.entries %}
+      {% for entrys in entries %}
+        {% set entry = entrys[0] %}
+        {% set points = entrys[1] %}
         <div class="item">
           <div class="ui small image">
             <img src="http://lorempixel.com/200/140/cats/{{ loop.index }}">
@@ -21,11 +23,19 @@
             <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
               {{ entry.title }}</a>
             <div class="meta">
+              {% if entry.category == 'idea' %}
+                <div class="ui label"><i class="icon lab"></i>&nbsp;&nbsp;Idea</div>
+              {% elif entry.category == 'bug' %}
+                <div class="ui label"><i class="icon bug"></i>&nbsp;&nbsp;Bug</div>
+              {% else %}
+                <div class="ui label"><i class="icon star"></i>&nbsp;&nbsp;Requirement</div>
+              {% endif %}
               {% if entry.user_id %}
                 <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;{{ entry.user.username }}</div>
               {% else %}
                 <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;Anonymous</div>
               {% endif %}
+              <div class="ui label"><i class="icon heart"></i>&nbsp;&nbsp;{{ points }}</div>
             </div>
             <div class="description">
               {{ entry.description }}
@@ -35,6 +45,11 @@
                  class="ui right floated blue button">
                 Comment
                 <i class="right chevron icon"></i>
+              </a>
+              <a href="{{ url_for('vote_entry', topic_id=topic.id, entry_id=entry.id) }}"
+                 class="ui right floated pink button">
+                <i class="left heart outline icon"></i>
+                Vote
               </a>
             </div>
           </div>
