@@ -5,7 +5,14 @@
 
 {% block body %}
   <div class="ui container">
-    <h3 class="ui header">{{ entry.title }}</h3>
+  <h3 class="ui header">{{ entry.title }}</h3>
+  <a href="{{ url_for('add_comment', topic_id=entry.topic_id, entry_id=entry.id) }}"
+     class="ui right floated teal button">
+    Add Comment
+    <i class="right plus icon"></i>
+  </a>
+  <div class="ui relaxed divided items">
+    <p>TODO</p>
   </div>
 {% endblock %}
 

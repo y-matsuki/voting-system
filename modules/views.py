@@ -180,13 +180,6 @@ def add_entry(id=None):
     return render_template('entry_new.html', topic=topic, form=form)
 
 
-@app.route('/topic/<topic_id>/entry/<entry_id>')
-@login_required
-def show_entry(topic_id=None, entry_id=None):
-    entry = Entry.query.get(entry_id)
-    return render_template('topic.html', entry=entry)
-
-
 @app.route('/topic/<topic_id>/entry/<entry_id>/vote')
 @login_required
 def vote_entry(topic_id=None, entry_id=None):
@@ -197,6 +190,20 @@ def vote_entry(topic_id=None, entry_id=None):
         db.session.add(point)
         db.session.commit()
     return redirect(url_for('show_topic', id=topic_id))
+
+
+@app.route('/topic/<topic_id>/entry/<entry_id>')
+@login_required
+def show_entry(topic_id=None, entry_id=None):
+    entry = Entry.query.get(entry_id)
+    return render_template('entry.html', entry=entry)
+
+
+@app.route('/topic/<topic_id>/entry/<entry_id>')
+@login_required
+def add_comment(topic_id=None, entry_id=None):
+    entry = Entry.query.get(entry_id)
+    return render_template('entry.html', entry=entry)
 
 
 @app.route('/user')
