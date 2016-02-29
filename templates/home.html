@@ -9,13 +9,15 @@
       {% for topic in topics %}
         <div class="item">
           <div class="ui small image">
-              <img src="http://lorempixel.com/200/140/cats/{{ loop.index }}">
+            <img src="{{ topic.title|gravatar }}">
           </div>
           <div class="content">
             <a class="header" href="{{ url_for('show_topic', id=topic.id) }}">
               {{ topic.title }}</a>
             <div class="description">
-              {{ topic.description }}
+              {% for line in topic.description.splitlines() %}
+                {{ line }}<br>
+              {% endfor %}
             </div>
             <div class="extra">
               <a href="{{ url_for('show_topic', id=topic.id) }}"

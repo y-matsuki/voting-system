@@ -13,6 +13,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, nullable=False)
     topics = db.relationship('Topic', backref='owner', lazy='dynamic')
     entries = db.relationship('Entry', backref='user', lazy='dynamic')
+    comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
     def get_id(self):
         return self.id
@@ -88,6 +89,7 @@ class Entry(db.Model):
     # New, Vote, Pending, Done, Close
     status = db.Column(db.Text, default='new')
     points = db.relationship('Point', backref='entry', lazy='dynamic')
+    comments = db.relationship('Comment', backref='entry', lazy='dynamic')
 
     def __repr__(self):
         return '<Entry id={id} title={title!r}>'.format(id=self.id, title=self.title)
@@ -98,6 +100,15 @@ class Point(db.Model):
     entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'), primary_key=True)
     user_id = db.Column(db.Text, db.ForeignKey('user.id'), primary_key=True)
     date = db.Column(db.Date, primary_key=True)
+
+
+class Comment(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True)
+    entry_id = db.Column(db.Integer, db.ForeignKey('entry.id'))
+    user_id = db.Column(db.Text, db.ForeignKey('user.id'))
+    text = db.Column(db.Text)
+    time = db.Column(db.DateTime)
 
 
 class Reset(db.Model):

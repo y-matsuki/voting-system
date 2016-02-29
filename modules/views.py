@@ -3,10 +3,9 @@ import uuid
 from app import app, db, mail, login_manager
 from flask import request, redirect, url_for, render_template, flash, session, jsonify
 from flask.ext.login import login_required, login_user, logout_user, current_user
-from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm
-from models import User, Reset, Topic, Entry, Point
-from datetime import date
-from sqlalchemy import func
+from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm, CommentForm
+from models import User, Reset, Topic, Entry, Point, Comment
+from datetime import date, datetime
 
 
 @login_manager.unauthorized_handler
@@ -166,10 +165,6 @@ def show_topic(id=None):
 def add_entry(id=None):
     topic = Topic.query.get(id)
     form = EntryForm(request.form)
-    print(form.title.data)
-    print(form.description.data)
-    print(form.category.data)
-    print(form.show_user.data)
     if form.validate_on_submit():
         entry = Entry(topic_id=topic.id, title=form.title.data,
                       description=form.description.data, category=form.category.data,
@@ -196,17 +191,55 @@ def vote_entry(topic_id=None, entry_id=None):
 @login_required
 def show_entry(topic_id=None, entry_id=None):
     entry = Entry.query.get(entry_id)
-    return render_template('entry.html', entry=entry)
+    return render_template('entry.html', entry=entry, form=CommentForm())
 
 
-@app.route('/topic/<topic_id>/entry/<entry_id>')
+@app.route('/topic/<topic_id>/entry/<entry_id>', methods=['GET', 'POST'])
 @login_required
 def add_comment(topic_id=None, entry_id=None):
-    entry = Entry.query.get(entry_id)
-    return render_template('entry.html', entry=entry)
+    form = CommentForm(request.form)
+    if form.validate_on_submit():
+        user_id = None
+        if form.show_user.data:
+            user_id = current_user.id
+        comment = Comment(entry_id=entry_id, user_id=user_id, text=form.text.data, time=datetime.now())
+        db.session.add(comment)
+        db.session.commit()
+    return redirect(url_for('show_entry', topic_id=topic_id, entry_id=entry_id))
 
 
 @app.route('/user')
 @login_required
 def user():
     return render_template('user.html')
+
+
+@app.template_filter()
+def friendly_time(dt, past_="ago", future_="from now", default="just now"):
+    """
+    Returns string representing "time since"
+    or "time until" e.g.
+    3 days ago, 5 hours from now etc.
+    """
+    now = datetime.now()
+    if now > dt:
+        diff = now - dt
+        dt_is_past = True
+    else:
+        diff = dt - now
+        dt_is_past = False
+    periods = (
+        (diff.days / 365, "year", "years"),
+        (diff.days / 30, "month", "months"),
+        (diff.days / 7, "week", "weeks"),
+        (diff.days, "day", "days"),
+        (diff.seconds / 3600, "hour", "hours"),
+        (diff.seconds / 60, "minute", "minutes"),
+        (diff.seconds, "second", "seconds"),
+    )
+    for period, singular, plural in periods:
+        if period:
+            return "%d %s %s" % (period,
+                                 singular if period == 1 else plural,
+                                 past_ if dt_is_past else future_)
+    return default

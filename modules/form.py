@@ -61,12 +61,21 @@ class EntryForm(Form):
         Length(min=1, max=50, message='Unique should be 1-50.')
     ])
     description = TextAreaField('Description', validators=[
-        DataRequired('Title is required.'),
+        DataRequired('Description is required.'),
         Length(min=1, max=5000, message='Description should be 1-5000.')
     ])
     category = SelectField('Type', choices=[
         ('requirement', 'Requirement'), ('idea', 'Idea'),
         ('bug', 'Bug')
+    ])
+    show_user = BooleanField('Show User')
+    submit = SubmitField('Submit')
+
+
+class CommentForm(Form):
+    text = TextAreaField('Comment', validators=[
+        DataRequired('Comment is required.'),
+        Length(min=1, max=5000, message='Text should be 1-5000.')
     ])
     show_user = BooleanField('Show User')
     submit = SubmitField('Submit')

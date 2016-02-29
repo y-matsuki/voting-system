@@ -17,28 +17,38 @@
         {% set points = entrys[1] %}
         <div class="item">
           <div class="ui small image">
-            <img src="http://lorempixel.com/200/140/cats/{{ loop.index }}">
+            <img src="{{ entry.title|gravatar }}">
           </div>
           <div class="content">
             <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
               {{ entry.title }}</a>
             <div class="meta">
               {% if entry.category == 'idea' %}
-                <div class="ui label"><i class="icon lab"></i>&nbsp;&nbsp;Idea</div>
+                <div class="ui label"><i class="icon lightbulb"></i>&nbsp;&nbsp;Idea</div>
               {% elif entry.category == 'bug' %}
                 <div class="ui label"><i class="icon bug"></i>&nbsp;&nbsp;Bug</div>
               {% else %}
                 <div class="ui label"><i class="icon star"></i>&nbsp;&nbsp;Requirement</div>
               {% endif %}
+
               {% if entry.user_id %}
                 <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;{{ entry.user.username }}</div>
               {% else %}
                 <div class="ui label"><i class="icon user"></i>&nbsp;&nbsp;Anonymous</div>
               {% endif %}
+
               <div class="ui label"><i class="icon heart"></i>&nbsp;&nbsp;{{ points }}</div>
+
+              {% if entry.status == 'new' %}
+                <div class="ui label"><i class="icon lab"></i>&nbsp;&nbsp;New</div>
+              {% elif entry.status == 'close' %}
+                <div class="ui label"><i class="icon checkmark"></i>&nbsp;&nbsp;Close</div>
+              {% endif %}
             </div>
             <div class="description">
-              {{ entry.description }}
+              {% for line in entry.description.splitlines() %}
+                {{ line }}<br>
+              {% endfor %}
             </div>
             <div class="extra">
               <a href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}"

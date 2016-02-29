@@ -7,6 +7,7 @@ from flask import Flask
 from flask.ext.login import LoginManager
 from flask.ext.sqlalchemy import SQLAlchemy
 from modules.mail import Mail
+from flask_gravatar import Gravatar
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -24,6 +25,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 db = SQLAlchemy(app)
+
+gravatar = Gravatar(app,
+                    size=100,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    use_ssl=False,
+                    base_url=None)
 
 # Mail
 server_root = app.config.get('SERVER_ROOT')
