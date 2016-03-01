@@ -5,13 +5,16 @@
 
 {% block body %}
   <div class="ui container">
-  <h3 class="ui header">{{ entry.title }}</h3>
+  <h3 class="ui header">
+    <a class="header" href="{{ url_for('show_topic', id=entry.topic_id) }}">{{ entry.topic.title }}</a>
+    > {{ entry.title }}
+  </h3>
   <div class="ui two column stackable grid container">
     <div class="column">
       <div class="ui piled pink segment">
         <div class="ui comments">
-          {% if entry.comments.all() %}
-            {% for comment in entry.comments.all() %}
+          {% if comments %}
+            {% for comment in comments %}
               <div class="comment">
                 <a class="avatar">
                   {% if comment.user %}

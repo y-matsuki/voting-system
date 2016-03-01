@@ -1,11 +1,12 @@
 import uuid
+from datetime import date, datetime
 
 from app import app, db, mail, login_manager
-from flask import request, redirect, url_for, render_template, flash, session, jsonify
+from flask import request, redirect, url_for, render_template, flash, session
 from flask.ext.login import login_required, login_user, logout_user, current_user
 from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm, CommentForm
 from models import User, Reset, Topic, Entry, Point, Comment
-from datetime import date, datetime
+from sqlalchemy import desc
 
 
 @login_manager.unauthorized_handler
@@ -135,6 +136,8 @@ def home():
 @app.route('/topic/new', methods=['GET', 'POST'])
 @login_required
 def add_topic():
+    if not current_user or not current_user.is_admin:
+        return redirect(url_for('home'))
     form = TopicForm(request.form)
     if form.validate_on_submit():
         topic = Topic.query.get(form.id.data)
@@ -153,11 +156,18 @@ def add_topic():
 @app.route('/topic/<id>')
 @login_required
 def show_topic(id=None):
+    status = request.args.get('status')
+    category = request.args.get('category')
     topic = Topic.query.get(id)
-    entries = db.session.query(Entry,
-                               db.func.count(Point.user_id).label('points')
-                               ).outerjoin(Point).group_by(Entry.id).order_by('points DESC')
-    return render_template('topic.html', topic=topic, entries=entries)
+    entries = db.session.query(Entry, db.func.count(Point.user_id).label('points'))
+    if status:
+        filtered = entries.filter_by(topic_id=id, status=status)
+    elif category:
+        filtered = entries.filter_by(topic_id=id, category=category)
+    else:
+        filtered = entries.filter_by(topic_id=id)
+    joined = filtered.outerjoin(Point).group_by(Entry.id).order_by(desc('points'))
+    return render_template('topic.html', topic=topic, entries=joined)
 
 
 @app.route('/topic/<id>/entry/new', methods=['GET', 'POST'])
@@ -191,7 +201,8 @@ def vote_entry(topic_id=None, entry_id=None):
 @login_required
 def show_entry(topic_id=None, entry_id=None):
     entry = Entry.query.get(entry_id)
-    return render_template('entry.html', entry=entry, form=CommentForm())
+    comments = Comment.query.filter_by(entry_id=entry_id).order_by(desc(Comment.time)).all()
+    return render_template('entry.html', entry=entry, comments=comments, form=CommentForm())
 
 
 @app.route('/topic/<topic_id>/entry/<entry_id>', methods=['GET', 'POST'])

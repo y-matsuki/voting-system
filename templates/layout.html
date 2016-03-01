@@ -10,7 +10,9 @@
       Voting System
     </div>
     <a href="{{ url_for('home') }}" class="item">Home</a>
-    <a href="{{ url_for('add_topic') }}" class="item">Add Topic</a>
+    {% if current_user.is_admin %}
+      <a href="{{ url_for('add_topic') }}" class="item">Add Topic</a>
+    {% endif %}
     <a href="{{ url_for('user') }}" class="ui right floated item">{{ current_user.username }}</a>
   </div>
 </div>
