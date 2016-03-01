@@ -26,3 +26,18 @@ $ python manage.py init_db
 $ python manage.py runserver --host 0.0.0.0
 $ open http://localhost:5000/
 ```
+
+# supervisor
+
+```
+# pip install supervisor
+# supervisord -c supervisord.conf
+```
+
+# nginx
+
+```
+# suodo yum install nginx
+# sudo cp nginx.conf /etc/nginx/conf.d/
+# sudo /etc/init.d/nginx restart
+```
