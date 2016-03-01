@@ -165,7 +165,7 @@ def show_topic(id=None):
         filtered = entries.filter_by(topic_id=id, category=category)
     else:
         filtered = entries.filter_by(topic_id=id)
-    joined = filtered.outerjoin(Point).group_by(Entry.id).order_by(desc('points'))
+    joined = filtered.outerjoin(Point).group_by(Entry.id).order_by(desc('points')).all()
     return render_template('topic.html', topic=topic, entries=joined)
 
 

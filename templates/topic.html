@@ -15,67 +15,72 @@
       <div class="ui tag labels">
         <a class="ui blue label" href="{{ url_for('show_topic', id=topic.id) }}">All</a>
         <a class="ui teal label" href="{{ url_for('show_topic', id=topic.id, category='idea') }}">Idea</a>
-        <a class="ui green label" href="{{ url_for('show_topic', id=topic.id, category='requirement') }}">Requirement</a>
+        <a class="ui green label"
+           href="{{ url_for('show_topic', id=topic.id, category='requirement') }}">Requirement</a>
         <a class="ui olive label" href="{{ url_for('show_topic', id=topic.id, category='bug') }}">Bug</a>
         <a class="ui orange label" href="{{ url_for('show_topic', id=topic.id, status='new') }}">New</a>
         <a class="ui red label" href="{{ url_for('show_topic', id=topic.id, status='close') }}">Close</a>
       </div>
     </div>
     <div class="ui relaxed divided items">
-      {% for entrys in entries %}
-        {% set entry = entrys[0] %}
-        {% set points = entrys[1] %}
-        <div class="item">
-          <div class="ui small image">
-            <img src="{{ entry.title|gravatar }}">
+      {% if entries %}
+        {% for entrys in entries %}
+          {% set entry = entrys[0] %}
+          {% set points = entrys[1] %}
+          <div class="item">
+            <div class="ui small image">
+              <img src="{{ entry.title|gravatar }}">
+            </div>
+            <div class="content">
+              <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
+                {{ entry.title }}</a>
+              <div class="meta">
+                {% if entry.user_id %}
+                  <div class="ui black image label"><img
+                      src="{{ entry.user.email|gravatar }}">&nbsp;&nbsp;{{ entry.user.username }}</div>
+                {% else %}
+                  <div class="ui grey image label"><img src="{{ 'Anonymous'|gravatar }}">&nbsp;&nbsp;Anonymous</div>
+                {% endif %}
+
+                {% if entry.category == 'idea' %}
+                  <div class="ui teal label"><i class="icon lightbulb"></i>&nbsp;&nbsp;Idea</div>
+                {% elif entry.category == 'bug' %}
+                  <div class="ui olive label"><i class="icon bug"></i>&nbsp;&nbsp;Bug</div>
+                {% else %}
+                  <div class="ui green label"><i class="icon star"></i>&nbsp;&nbsp;Requirement</div>
+                {% endif %}
+
+                <div class="ui pink label"><i class="icon heart"></i>&nbsp;&nbsp;{{ points }}</div>
+
+                {% if entry.status == 'new' %}
+                  <div class="ui orange label"><i class="icon lab"></i>&nbsp;&nbsp;New</div>
+                {% elif entry.status == 'close' %}
+                  <div class="ui red label"><i class="icon checkmark"></i>&nbsp;&nbsp;Close</div>
+                {% endif %}
+              </div>
+              <div class="description">
+                {% for line in entry.description.splitlines() %}
+                  {{ line }}<br>
+                {% endfor %}
+              </div>
+              <div class="extra">
+                <a href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}"
+                   class="ui right floated blue button">
+                  Comment
+                  <i class="right chevron icon"></i>
+                </a>
+                <a href="{{ url_for('vote_entry', topic_id=topic.id, entry_id=entry.id) }}"
+                   class="ui right floated pink button">
+                  <i class="left heart outline icon"></i>
+                  Vote
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="content">
-            <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
-              {{ entry.title }}</a>
-            <div class="meta">
-              {% if entry.user_id %}
-                <div class="ui black image label"><img
-                    src="{{ entry.user.email|gravatar }}">&nbsp;&nbsp;{{ entry.user.username }}</div>
-              {% else %}
-                <div class="ui grey image label"><img src="{{ 'Anonymous'|gravatar }}">&nbsp;&nbsp;Anonymous</div>
-              {% endif %}
-
-              {% if entry.category == 'idea' %}
-                <div class="ui teal label"><i class="icon lightbulb"></i>&nbsp;&nbsp;Idea</div>
-              {% elif entry.category == 'bug' %}
-                <div class="ui olive label"><i class="icon bug"></i>&nbsp;&nbsp;Bug</div>
-              {% else %}
-                <div class="ui green label"><i class="icon star"></i>&nbsp;&nbsp;Requirement</div>
-              {% endif %}
-
-              <div class="ui pink label"><i class="icon heart"></i>&nbsp;&nbsp;{{ points }}</div>
-
-              {% if entry.status == 'new' %}
-                <div class="ui orange label"><i class="icon lab"></i>&nbsp;&nbsp;New</div>
-              {% elif entry.status == 'close' %}
-                <div class="ui red label"><i class="icon checkmark"></i>&nbsp;&nbsp;Close</div>
-              {% endif %}
-            </div>
-            <div class="description">
-              {% for line in entry.description.splitlines() %}
-                {{ line }}<br>
-              {% endfor %}
-            </div>
-            <div class="extra">
-              <a href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}"
-                 class="ui right floated blue button">
-                Comment
-                <i class="right chevron icon"></i>
-              </a>
-              <a href="{{ url_for('vote_entry', topic_id=topic.id, entry_id=entry.id) }}"
-                 class="ui right floated pink button">
-                <i class="left heart outline icon"></i>
-                Vote
-              </a>
-            </div>
-          </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      {% else %}
+        <p>There is no entry.</p>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
