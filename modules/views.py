@@ -97,8 +97,7 @@ def password_reset(key=None):
 
 @app.route('/thanks')
 def thanks():
-    # TODO
-    return 'thank you!'
+    return render_template('plain.html', message='Please confirm e-mail.')
 
 
 @app.route('/password', methods=['GET', 'POST'])

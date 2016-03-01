@@ -27,13 +27,13 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="mail icon"></i>
-              {{ login_form.email(size=20) }}
+              {{ login_form.email(placeholder='e-mail') }}
             </div>
           </div>
           <div class="field">
             <div class="ui left icon input">
               <i class="lock icon"></i>
-              {{ login_form.password(size=20) }}
+              {{ login_form.password(placeholder='password') }}
             </div>
           </div>
           {{ login_form.submit(class='ui fluid large teal submit button') }}
@@ -47,13 +47,13 @@
           <div class="field">
             <div class="ui left icon input">
               <i class="user icon"></i>
-              {{ signup_form.username(size=20) }}
+              {{ signup_form.username(placeholder='username') }}
             </div>
           </div>
           <div class="field">
             <div class="ui left icon input">
               <i class="mail icon"></i>
-              {{ signup_form.email(size=20) }}
+              {{ signup_form.email(placeholder='e-mial') }}
             </div>
           </div>
           {{ signup_form.submit(class='ui fluid large teal submit button') }}

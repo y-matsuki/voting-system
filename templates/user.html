@@ -5,7 +5,21 @@
 
 {% block body %}
   <div class="ui container">
-    User Page
+    <div class="ui card">
+      <div class="image">
+        <img src="{{ current_user.email|gravatar }}"></img>
+      </div>
+      <div class="content">
+        <p class="header">{{ current_user.username }}</p>
+        <div class="description">
+          {{ current_user.email }}
+        </div>
+      </div>
+      <a class="ui bottom attached button" href="{{ url_for('logout') }}">
+        <i class="external square icon"></i>
+        Logout
+      </a>
+    </div>
   </div>
 {% endblock %}
 
