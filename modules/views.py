@@ -4,8 +4,8 @@ from datetime import date, datetime
 from app import app, db, mail, login_manager
 from flask import request, redirect, url_for, render_template, flash, session
 from flask.ext.login import login_required, login_user, logout_user, current_user
-from form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm, CommentForm
-from models import User, Reset, Topic, Entry, Point, Comment
+from .form import LoginForm, SignupForm, PasswordForm, TopicForm, EntryForm, CommentForm
+from .models import User, Reset, Topic, Entry, Point, Comment
 from sqlalchemy import desc
 
 
@@ -71,7 +71,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            key = uuid.uuid4().get_hex()
+            key = uuid.uuid4().hex
             db.session.add(Reset(key=key, user_id=user.id))
             db.session.commit()
             mail.sign_up(username=user.username, email=user.email, key=key)

@@ -19,7 +19,7 @@ POSTMARK_API_KEY = '00000000-0000-0000-0000-000000000000'
 ## launch
 
 ```
-$ virtualenv venv
+$ pyvenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 $ python manage.py init_db

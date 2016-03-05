@@ -1,5 +1,5 @@
 import json
-import urllib2
+import urllib.request
 
 url = 'https://api.postmarkapp.com/email/withTemplate'
 
@@ -27,6 +27,6 @@ class Mail(object):
             'Content-Type': 'application/json',
             'X-Postmark-Server-Token': self.api_key
         }
-        req = urllib2.Request(url, json.dumps(values), headers)
-        resp = urllib2.urlopen(req)
+        req = urllib.request.Request(url, json.dumps(values).encode('utf-8'), headers)
+        resp = urllib.request.urlopen(req)
         print(resp.read())
