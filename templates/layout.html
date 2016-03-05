@@ -6,14 +6,18 @@
 <div class="ui borderless main menu">
   <div class="ui container">
     <div href="{{ url_for('home') }}" class="header item">
-      <i class="icon comments"></i>
-      Voting System
+      <a href="{{ url_for('home') }}">
+        <img class="ui tiny image" src="{{ url_for('static', filename='img/logo.png') }}">
+      </a>
     </div>
     <a href="{{ url_for('home') }}" class="item">Home</a>
     {% if current_user.is_admin %}
       <a href="{{ url_for('add_topic') }}" class="item">Add Topic</a>
     {% endif %}
-    <a href="{{ url_for('user') }}" class="ui right floated item">{{ current_user.username }}</a>
+    <a href="{{ url_for('user') }}" class="ui right floated item">
+      <img class="rounded ui mini image" src="{{ current_user.email|gravatar }}">
+      &nbsp;&nbsp;{{ current_user.username }}
+    </a>
   </div>
 </div>
 
@@ -22,9 +26,4 @@
 </div>
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script src="{{ url_for('static', filename='semantic/semantic.min.js') }}"></script>
-<script>
-  $(document).ready(function () {
-
-  })
-</script>
 {% block script %}{% endblock %}

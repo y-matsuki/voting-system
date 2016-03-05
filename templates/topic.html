@@ -28,9 +28,6 @@
           {% set entry = entrys[0] %}
           {% set points = entrys[1] %}
           <div class="item">
-            <div class="ui small image">
-              <img src="{{ entry.title|gravatar }}">
-            </div>
             <div class="content">
               <a class="header" href="{{ url_for('show_entry', topic_id=topic.id, entry_id=entry.id) }}">
                 {{ entry.title }}</a>
